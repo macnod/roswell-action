@@ -3,50 +3,70 @@ description: 'Install Roswell (Common Lisp environment setup utility) and option
 author: 'macnod'
 
 inputs:
-  sbcl-version:
-    description: 'The version of SBCL to install (e.g., 2.5.10). If not specified, the default SBCL will be installed.'
+  roswell-version:
+    description: 'Roswell version. Default: 23.10.14.114'
     required: false
-    default: ''
+    default: '23.10.14.114'
+  sbcl-version:
+    description: 'SBCL version. Default: 2.5.10'
+    required: false
+    default: '2.5.10'
 
 runs:
   using: 'composite'
   steps:
-    - name: Install Roswell
+    - name: Cache full Roswell
+      uses: actions/cache@v4
+      id: cache
+      with:
+        path: ~/.roswell
+        key: roswell-${{ runner.os }}-${{ inputs.roswell-version }}-${{ inputs.sbcl-version || 'default' }}
+        restore-keys: |
+          roswell-${{ runner.os }}-
+
+    - name: Install Roswell (system-wide)
       shell: bash
       run: |
-        curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb --output roswell.deb
-        sudo dpkg -i roswell.deb
-        ros install sbcl-bin/2.5.10
-        ros use sbcl-bin/2.5.10
+        url_prefix="https://github.com/roswell/roswell/releases/download"
+        roswell_version="${{ inputs.roswell-version }}"
+        url="${url_prefix}/v${roswell_version}/roswell_${roswell_version}-1_amd64.deb"
+        if ! command -v ros >/dev/null 2>&1 || ! ros version | grep -q "$roswell_version"; then
+          echo "Installing Roswell $roswell_version..."
+          curl -L "${url}" -o roswell.deb
+          sudo dpkg -i roswell.deb
+          rm roswell.deb
+        else
+          echo "Roswell $roswell_version already installed"
+        fi
 
-    # - name: Add Roswell to PATH
-    #   shell: bash
-    #   run: |
-    #     echo "$HOME/.roswell/bin" >> $GITHUB_PATH
-    #     echo "/usr/local/bin" >> $GITHUB_PATH
+    - name: Set up SBCL (cache miss or ensure active)
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        sbcl_version="${{ inputs.sbcl-version || '2.5.10' }}"
+        echo "Installing SBCL $sbcl_version (cache miss)..."
+        ros install sbcl-bin/$sbcl_version
+        ros use sbcl-bin/$sbcl_version
 
-    # - name: Install SBCL
-    #   shell: bash
-    #   run: |
-    #     set -e
-    #     if [ -n "${{ inputs.sbcl-version }}" ]; then
-    #       echo "Installing SBCL version ${{ inputs.sbcl-version }}..."
-    #       ros install sbcl/${{ inputs.sbcl-version }}
-    #       ros use sbcl/${{ inputs.sbcl-version }}
-    #     else
-    #       echo "Installing default SBCL..."
-    #       ros install sbcl-bin
-    #     fi
+    - name: Activate cached SBCL
+      if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        sbcl_version="${{ inputs.sbcl-version || '2.5.10' }}"
+        echo "Activating cached SBCL $sbcl_version"
+        ros use sbcl-bin/$sbcl_version
 
     - name: Verify Installation
       shell: bash
       run: |
         set -e
+        echo "✅ Cache hit: ${{ steps.cache.outputs.cache-hit }}"
         echo "Roswell version:"
         ros version
-        echo ""
-        echo "SBCL version:"
+        echo "Active SBCL:"
         ros run -- --version
+        echo "Installed impls:"
+        ros list installed | grep sbcl
 
 branding:
   icon: 'package'
