@@ -5,7 +5,7 @@ GitHub Action to install **Roswell** (Common Lisp environment manager) + **SBCL*
 ## Quick Start
 
 ```yaml
-- uses: macnod/roswell-action@v1
+- uses: macnod/roswell-action@v2
 ```
 
 **Default versions:**
@@ -15,7 +15,7 @@ GitHub Action to install **Roswell** (Common Lisp environment manager) + **SBCL*
 ## Specify Versions
 
 ```yaml
-- uses: macnod/roswell-action@v1
+- uses: macnod/roswell-action@v2
   with:
     sbcl-version: 2.5.10      # Optional
     roswell-version: 23.10.14.114  # Optional
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: macnod/roswell-action@v1
+      - uses: macnod/roswell-action@v2
       - run: |
           ros version
           ros run -- --version
