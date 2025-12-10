@@ -14,13 +14,10 @@ runs:
     - name: Install Roswell
       shell: bash
       run: |
-        set -e
-        echo "Installing Roswell..."
-        curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
-        echo "$HOME/.roswell/bin" >> $GITHUB_PATH
-        ~/.roswell/bin/ros install sbcl-bin/$(SBCL_VERSION)
-        ~/.roswell/bin/ros use sbcl-bin/$(SBCL_VERSION)
-        echo "Roswell installation complete."
+        curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb --output roswell.deb
+        sudo dpkg -i roswell.deb
+        ros install sbcl-bin/2.5.10
+        ros use sbcl-bin/2.5.10
 
     # - name: Add Roswell to PATH
     #   shell: bash
