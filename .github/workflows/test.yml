@@ -1,0 +1,56 @@
+name: Test Action
+
+on:
+  push:
+    branches: [ main, copilot/** ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-default:
+    runs-on: ubuntu-latest
+    name: Test with default SBCL
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Run roswell-action with default SBCL
+        uses: ./
+        
+      - name: Test Roswell
+        run: |
+          echo "Testing Roswell installation..."
+          ros version
+          
+      - name: Test SBCL
+        run: |
+          echo "Testing SBCL installation..."
+          ros run -- --version
+          ros run -- --eval "(print 'hello-world)" --quit
+
+  test-specific-version:
+    runs-on: ubuntu-latest
+    name: Test with SBCL 2.5.10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Run roswell-action with SBCL 2.5.10
+        uses: ./
+        with:
+          sbcl-version: 2.5.10
+        
+      - name: Test Roswell
+        run: |
+          echo "Testing Roswell installation..."
+          ros version
+          
+      - name: Test SBCL version
+        run: |
+          echo "Testing SBCL 2.5.10 installation..."
+          ros run -- --version | grep "SBCL 2.5.10"
+          ros run -- --eval "(print 'hello-world)" --quit
