@@ -16,7 +16,7 @@ runs:
       run: |
         set -e
         echo "Installing Roswell..."
-        curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell-23.10.14.114-linux-x86_64.ros | bash
+        curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell-23.10.14.114-linux-x86_64.ros | sh
         echo "$HOME/.roswell/bin" >> $GITHUB_PATH
         ~/.roswell/bin/ros install sbcl-bin/$(SBCL_VERSION)
         ~/.roswell/bin/ros use sbcl-bin/$(SBCL_VERSION)
