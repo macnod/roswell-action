@@ -3,10 +3,14 @@ description: 'Install Roswell (Common Lisp environment setup utility) and option
 author: 'macnod'
 
 inputs:
-  sbcl-version:
-    description: 'The version of SBCL to install (e.g., 2.5.10). If not specified, the default SBCL will be installed.'
+  roswell-version:
+    description: 'Roswell version. Default: 23.10.14.114'
     required: false
-    default: ''
+    default: '23.10.14.114'
+  sbcl-version:
+    description: 'SBCL version. Default: 2.5.10'
+    required: false
+    default: '2.5.10'
 
 runs:
   using: 'composite'
@@ -23,9 +27,12 @@ runs:
     - name: Install Roswell (system-wide)
       shell: bash
       run: |
+        url_prefix="https://github.com/roswell/roswell/releases/download"
+        roswell_version="${{ inputs.roswell-version }}"
+        url="{url_prefix}/v${roswell_version}/roswell_${roswell_version}-1_amd64.deb"
         if ! command -v ros >/dev/null 2>&1; then
           echo "Installing Roswell..."
-          curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb -o roswell.deb
+          curl -L "${url}" -o roswell.deb
           sudo dpkg -i roswell.deb
           rm roswell.deb
         else
