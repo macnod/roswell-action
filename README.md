@@ -17,7 +17,7 @@ GitHub Action to install **Roswell** (Common Lisp environment manager) + **SBCL*
 ```yaml
 - uses: macnod/roswell-action@v2
   with:
-    sbcl-version: 2.5.10      # Optional
+    sbcl-version: 2.5.10           # Optional
     roswell-version: 23.10.14.114  # Optional
 ```
 
