@@ -11,16 +11,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Cache Roswell impls only
+    - name: Cache full Roswell
       uses: actions/cache@v4
       id: cache
       with:
-        path: ~/.roswell/impls
+        path: ~/.roswell
         key: roswell-${{ runner.os }}-${{ inputs.sbcl-version || 'default' }}
         restore-keys: |
           roswell-${{ runner.os }}-
 
-    - name: Install Roswell (always - system-wide via dpkg)
+    - name: Install Roswell (system-wide)
       shell: bash
       run: |
         if ! command -v ros >/dev/null 2>&1; then
@@ -32,28 +32,34 @@ runs:
           echo "Roswell already installed"
         fi
 
-    - name: Install SBCL (only if missing)
+    - name: Setup SBCL (cache miss or ensure active)
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         sbcl_version="${{ inputs.sbcl-version || '2.5.10' }}"
-        echo "Installing SBCL $sbcl_version (no cache hit)"
-        if ! ros list installed | grep -q "sbcl-bin/$sbcl_version"; then
-          ros install sbcl-bin/$sbcl_version
-        fi
+        echo "Installing SBCL $sbcl_version (no cache)"
+        ros install sbcl-bin/$sbcl_version
+        ros use sbcl-bin/$sbcl_version
+
+    - name: Activate cached SBCL
+      if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        sbcl_version="${{ inputs.sbcl-version || '2.5.10' }}"
+        echo "Activating cached SBCL $sbcl_version"
         ros use sbcl-bin/$sbcl_version
 
     - name: Verify Installation
       shell: bash
       run: |
         set -e
-        echo "✅ Cache hit (SBCL): ${{ steps.cache.outputs.cache-hit }}"
+        echo "✅ Cache hit: ${{ steps.cache.outputs.cache-hit }}"
         echo "Roswell version:"
         ros version
-        echo "SBCL version:"
+        echo "Active SBCL:"
         ros run -- --version
         echo "Installed impls:"
-        ros list installed | head -5
+        ros list installed | grep sbcl
 
 branding:
   icon: 'package'
