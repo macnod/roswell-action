@@ -20,7 +20,7 @@ runs:
       id: cache
       with:
         path: ~/.roswell
-        key: roswell-${{ runner.os }}-${{ inputs.sbcl-version || 'default' }}
+        key: roswell-${{ runner.os }}-${{ inputs.roswell-version }}-${{ inputs.sbcl-version }}
         restore-keys: |
           roswell-${{ runner.os }}-
 
