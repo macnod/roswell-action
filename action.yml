@@ -32,7 +32,7 @@ runs:
         url="${url_prefix}/v${roswell_version}/roswell_${roswell_version}-1_amd64.deb"
         if ! command -v ros >/dev/null 2>&1; then
           echo "Installing Roswell..."
-          curl -L "${url}" -o roswell.deb
+          curl -fsSL "${url}" -o roswell.deb || { echo "Failed to download Roswell $roswell_version"; exit 1; }
           sudo dpkg -i roswell.deb
           rm roswell.deb
         else
@@ -43,7 +43,7 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        sbcl_version="${{ inputs.sbcl-version || '2.5.10' }}"
+        sbcl_version="${{ inputs.sbcl-version }}"
         echo "Installing SBCL $sbcl_version (no cache)"
         ros install sbcl-bin/$sbcl_version
         ros use sbcl-bin/$sbcl_version
@@ -52,7 +52,7 @@ runs:
       if: steps.cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        sbcl_version="${{ inputs.sbcl-version || '2.5.10' }}"
+        sbcl_version="${{ inputs.sbcl-version }}"
         echo "Activating cached SBCL $sbcl_version"
         ros use sbcl-bin/$sbcl_version
 
