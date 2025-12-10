@@ -16,7 +16,7 @@ runs:
       run: |
         set -e
         echo "Installing Roswell..."
-        curl -L $(ROSWELL_FULL_URL) --output roswell.deb; \
+        curl -L "https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb" --output roswell.deb --output roswell.deb; \
         dpkg -i roswell.deb; \
         ros install sbcl-bin/$(SBCL_VERSION); \
         ros use sbcl-bin/$(SBCL_VERSION); \
