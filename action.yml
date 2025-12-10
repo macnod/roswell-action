@@ -11,37 +11,26 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Cache Roswell and SBCL
+    - name: Cache Roswell impls only
       uses: actions/cache@v4
       id: cache
       with:
-        path: ~/.roswell
+        path: ~/.roswell/impls
         key: roswell-${{ runner.os }}-${{ inputs.sbcl-version || 'default' }}
         restore-keys: |
           roswell-${{ runner.os }}-
 
-    - name: Fix Roswell PATH (cache restore)
-      if: steps.cache.outputs.cache-hit == 'true'
+    - name: Install Roswell (always - system-wide via dpkg)
       shell: bash
       run: |
-        echo "~/.roswell exists: $(ls -la ~/.roswell 2>/dev/null || echo 'missing')"
-        if [[ -f ~/.roswell/bin/ros ]]; then
-          echo "~/.roswell/bin already in PATH"
+        if ! command -v ros >/dev/null 2>&1; then
+          echo "Installing Roswell..."
+          curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb -o roswell.deb
+          sudo dpkg -i roswell.deb
+          rm roswell.deb
         else
-          echo "Fixing PATH for restored cache..."
-          echo "$HOME/.roswell/bin" >> $GITHUB_PATH
-          echo "PATH updated:"
-          echo $PATH
+          echo "Roswell already installed"
         fi
-
-    - name: Install Roswell
-      if: steps.cache.outputs.cache-hit != 'true'
-      shell: bash
-      run: |
-        echo "Installing Roswell (no cache hit)"
-        curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb -o roswell.deb
-        sudo dpkg -i roswell.deb
-        echo "$HOME/.roswell/bin" >> $GITHUB_PATH
 
     - name: Install SBCL
       if: steps.cache.outputs.cache-hit != 'true'
@@ -55,9 +44,7 @@ runs:
       shell: bash
       run: |
         set -e
-        echo "✅ Cache hit: ${{ steps.cache.outputs.cache-hit }}"
-        echo "PATH includes .roswell/bin: $(echo $PATH | tr ':' '\n' | grep roswell)"
-        which ros || echo "ros not in PATH"
+        echo "✅ Cache hit (SBCL): ${{ steps.cache.outputs.cache-hit }}"
         echo "Roswell version:"
         ros version
         echo "SBCL version:"
