@@ -44,7 +44,7 @@ runs:
       shell: bash
       run: |
         sbcl_version="${{ inputs.sbcl-version || '2.5.10' }}"
-        echo "Installing SBCL $sbcl_version (no cache)"
+        echo "Installing SBCL $sbcl_version (cache miss)..."
         ros install sbcl-bin/$sbcl_version
         ros use sbcl-bin/$sbcl_version
 
