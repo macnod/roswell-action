@@ -16,27 +16,31 @@ runs:
       run: |
         set -e
         echo "Installing Roswell..."
-        curl -sSL https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
-        
-    - name: Add Roswell to PATH
-      shell: bash
-      run: |
-        echo "$HOME/.roswell/bin" >> $GITHUB_PATH
-        echo "/usr/local/bin" >> $GITHUB_PATH
-        
-    - name: Install SBCL
-      shell: bash
-      run: |
-        set -e
-        if [ -n "${{ inputs.sbcl-version }}" ]; then
-          echo "Installing SBCL version ${{ inputs.sbcl-version }}..."
-          ros install sbcl/${{ inputs.sbcl-version }}
-          ros use sbcl/${{ inputs.sbcl-version }}
-        else
-          echo "Installing default SBCL..."
-          ros install sbcl-bin
-        fi
-        
+        curl -L $(ROSWELL_FULL_URL) --output roswell.deb; \
+        dpkg -i roswell.deb; \
+        ros install sbcl-bin/$(SBCL_VERSION); \
+        ros use sbcl-bin/$(SBCL_VERSION); \
+        echo "Roswell installation complete."
+
+    # - name: Add Roswell to PATH
+    #   shell: bash
+    #   run: |
+    #     echo "$HOME/.roswell/bin" >> $GITHUB_PATH
+    #     echo "/usr/local/bin" >> $GITHUB_PATH
+
+    # - name: Install SBCL
+    #   shell: bash
+    #   run: |
+    #     set -e
+    #     if [ -n "${{ inputs.sbcl-version }}" ]; then
+    #       echo "Installing SBCL version ${{ inputs.sbcl-version }}..."
+    #       ros install sbcl/${{ inputs.sbcl-version }}
+    #       ros use sbcl/${{ inputs.sbcl-version }}
+    #     else
+    #       echo "Installing default SBCL..."
+    #       ros install sbcl-bin
+    #     fi
+
     - name: Verify Installation
       shell: bash
       run: |
