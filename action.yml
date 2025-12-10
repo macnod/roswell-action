@@ -30,13 +30,13 @@ runs:
         url_prefix="https://github.com/roswell/roswell/releases/download"
         roswell_version="${{ inputs.roswell-version }}"
         url="${url_prefix}/v${roswell_version}/roswell_${roswell_version}-1_amd64.deb"
-        if ! command -v ros >/dev/null 2>&1; then
-          echo "Installing Roswell..."
+        if ! command -v ros >/dev/null 2>&1 || ! ros version | grep -q "$roswell_version"; then
+          echo "Installing Roswell $roswell_version..."
           curl -L "${url}" -o roswell.deb
           sudo dpkg -i roswell.deb
           rm roswell.deb
         else
-          echo "Roswell already installed"
+          echo "Roswell $roswell_version already installed"
         fi
 
     - name: Set up SBCL (cache miss or ensure active)
