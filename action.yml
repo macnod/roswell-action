@@ -12,20 +12,19 @@ runs:
   using: 'composite'
   steps:
     - name: Cache Roswell and SBCL
+      uses: actions/cache@v4
       id: cache
-      shell: bash
-      run: |
-        cache_key="roswell-${{ inputs.sbcl-version || 'default' }}"
-        echo "cache-hit=false" >> $GITHUB_OUTPUT
-        if [[ -d "$HOME/.roswell" ]]; then
-          echo "cache-hit=true" >> $GITHUB_OUTPUT
-          echo "Roswell cache hit!"
-        fi
+      with:
+        path: ~/.roswell
+        key: roswell-${{ runner.os }}-${{ inputs.sbcl-version || 'default' }}
+        restore-keys: |
+          roswell-${{ runner.os }}-
 
     - name: Install Roswell
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        echo "Installing Roswell (no cache hit)"
         curl -L https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb -o roswell.deb
         sudo dpkg -i roswell.deb
 
@@ -33,6 +32,7 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        echo "Installing SBCL ${{ inputs.sbcl-version || 'default' }} (no cache hit)"
         ros install sbcl-bin/${{ inputs.sbcl-version || '2.5.10' }}
         ros use sbcl-bin/${{ inputs.sbcl-version || '2.5.10' }}
 
@@ -40,9 +40,9 @@ runs:
       shell: bash
       run: |
         set -e
+        echo "✅ Cache hit: ${{ steps.cache.outputs.cache-hit }}"
         echo "Roswell version:"
         ros version
-        echo ""
         echo "SBCL version:"
         ros run -- --version
 
