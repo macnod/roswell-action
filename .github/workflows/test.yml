@@ -55,26 +55,3 @@ jobs:
           echo "Testing SBCL 2.5.10 installation..."
           ros run -- --version | grep "SBCL 2.5.10"
           ros run -- --eval "(print 'hello-world)" --quit
-
-  test-disable-cache:
-    runs-on: ubuntu-latest
-    name: Test disable-cache
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run roswell-action with disable-cache
-        uses: ./
-        with:
-          disable-cache: true
-
-      - name: Test Roswell
-        run: |
-          echo "Testing Roswell installation..."
-          ros version
-
-      - name: Test SBCL version
-        run: |
-          echo "Testing SBCL 2.5.10 installation..."
-          ros run -- --version | grep "SBCL 2.5.10"
-          ros run -- --eval "(print 'hello-world)" --quit
