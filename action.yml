@@ -65,6 +65,7 @@ runs:
       run: |
         set -e
         echo "✅ Cache hit: ${{ steps.cache.outputs.cache-hit }}"
+        echo "✅ Disable cache: ${{ inputs.disable-cache }}"
         echo "Roswell version:"
         ros version
         echo "Active SBCL:"
