@@ -19,6 +19,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Debug caching
+      run: echo "disable-cache: '${{inputs.disable-cache}}'"
+
     - name: Cache full Roswell
       if: inputs.disable-cache == 'false'
       uses: actions/cache@v4
