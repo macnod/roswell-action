@@ -20,6 +20,7 @@ runs:
   using: 'composite'
   steps:
     - name: Cache full Roswell
+      if: inputs.disable-cache == 'false'
       uses: actions/cache@v4
       id: cache
       with:
