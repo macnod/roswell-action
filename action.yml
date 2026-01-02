@@ -93,6 +93,7 @@ runs:
         sudo dpkg -i roswell.deb
         rm roswell.deb
         echo "ros path: $(which ros)"
+        ls ~/.roswell
 
     - name: Roswell already installed
       if: inputs.disable-cache == 'false' && steps.cache.outputs.cache-hit == 'true'
