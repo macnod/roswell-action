@@ -43,6 +43,7 @@ jobs:
 |------------------|--------------------|-------------|
 | `sbcl-version`   | `2.5.10`          | SBCL version |
 | `roswell-version`| `23.10.14.114`    | Roswell version |
+| `disable-cache`  | `false`           | Disable caching |
 
 ## What it does
 
