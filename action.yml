@@ -21,7 +21,8 @@ runs:
   steps:
     - name: Debug caching
       shell: bash
-      run: echo "disable-cache: '${{inputs.disable-cache}}'"
+      run: |
+        echo "disable-cache: '${{inputs.disable-cache}}'"
 
     - name: Cache full Roswell
       if: inputs.disable-cache == 'false'
