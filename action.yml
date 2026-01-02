@@ -50,6 +50,18 @@ runs:
         restore-keys: |
           roswell-${{ runner.os }}-
 
+    - name: Cache hit
+      if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        echo "✅ Cache hit. cache-hit='${{ steps.cache.outputs.cache-hit }}'"
+
+    - name: Cache miss
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        echo "✅ Cache miss. cache-hit='${{ steps.cache.outputs.cache-hit }}'"
+
     - name: Install Roswell (system-wide)
       if: inputs.disable-cache == 'true' || steps.cache.outputs.cache-hit != 'true'
       shell: bash
