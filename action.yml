@@ -54,13 +54,17 @@ runs:
       if: steps.cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        echo "✅ Cache hit. cache-hit='${{ steps.cache.outputs.cache-hit }}'"
+        echo "✅ Cache hit."
+        echo "- cache-hit='${{ steps.cache.outputs.cache-hit }}'"
+        echo "- disable-cache='${{ inputs.disable-cache }}'"
 
     - name: Cache miss
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        echo "✅ Cache miss. cache-hit='${{ steps.cache.outputs.cache-hit }}'"
+        echo "✅ Cache miss."
+        echo "- cache-hit='${{ steps.cache.outputs.cache-hit }}'"
+        echo "- disable-cache='${{ inputs.disable-cache }}'"
 
     - name: Install Roswell (system-wide)
       if: inputs.disable-cache == 'true' || steps.cache.outputs.cache-hit != 'true'
