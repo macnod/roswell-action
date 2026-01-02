@@ -91,9 +91,9 @@ runs:
         echo "Installing Roswell..."
         curl -fsSL "${url}" -o roswell.deb || { echo "Failed to download Roswell $roswell_version"; exit 1; }
         sudo dpkg -i roswell.deb
-        rm roswell.deb
         echo "ros path: $(which ros)"
-        ls ~/.roswell
+        dpkg-query -L roswell
+        rm roswell.deb
 
     - name: Roswell already installed
       if: inputs.disable-cache == 'false' && steps.cache.outputs.cache-hit == 'true'
