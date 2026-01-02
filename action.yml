@@ -51,7 +51,7 @@ runs:
           roswell-${{ runner.os }}-
 
     - name: Install Roswell (system-wide)
-      if: inputs.disable-cache == 'false' && steps.cache.outputs.cache-hit == 'false'
+      if: inputs.disable-cache == 'false' || steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         url_prefix="https://github.com/roswell/roswell/releases/download"
@@ -63,13 +63,13 @@ runs:
         rm roswell.deb
 
     - name: Roswell already installed
-      if: inputs.disable-cache == 'true' && steps.cache.outputs.cache-hit == 'true'
+      if: inputs.disable-cache == 'false' && steps.cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
         echo "✅ Cache hit. Roswell installed from cache"
 
     - name: Setup SBCL (cache miss or ensure active)
-      if: steps.cache.outputs.cache-hit != 'true' || inputs.disable-cache == 'true'
+      if: inputs.disable-cache == 'true' || steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         sbcl_version="${{ inputs.sbcl-version }}"
