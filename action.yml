@@ -24,6 +24,17 @@ runs:
       run: |
         echo "disable-cache: '${{inputs.disable-cache}}'"
 
+    - name: Cache disabled
+      if: inputs.disable-cache == false
+      shell: bash
+      run: |
+        echo "Cache disabled"
+
+    - name: Cache enabled
+      if: inputs.disable-cache == true
+      run: |
+        echo "Cache enabled"
+
     - name: Cache full Roswell
       if: inputs.disable-cache == false
       uses: actions/cache@v4
