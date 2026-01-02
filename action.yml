@@ -44,6 +44,7 @@ runs:
     - name: Cache full Roswell
       uses: actions/cache@v4
       id: cache
+      if: inputs.disable-cache == 'false'
       with:
         path: ~/.roswell
         key: roswell-${{ runner.os }}-${{ inputs.roswell-version }}-${{ inputs.sbcl-version }}
