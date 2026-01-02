@@ -58,7 +58,7 @@ jobs:
 
   test-disable-cache:
     runs-on: ubuntu-latest
-    name: Test with SBCL 2.5.10
+    name: Test disable-cache
     steps:
       - name: Checkout
         uses: actions/checkout@v4
