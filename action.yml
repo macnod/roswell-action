@@ -67,6 +67,20 @@ runs:
         echo "- cache-hit='${{ steps.cache.outputs.cache-hit }}'"
         echo "- disable-cache='${{ inputs.disable-cache }}'"
 
+    - name: Setup PATH for cached Roswell
+      if: steps.cache.outputs.cache-hit == 'true' && inputs.disable-cache == 'false'
+      shell: bash
+      run: |
+        if [ -f ~/.roswell/setup.sh ]; then
+          source ~/.roswell/setup.sh
+        elif [ -f ~/.roswell/bin/ros ]; then
+          echo "~/.roswell/bin" >> $GITHUB_PATH
+        else
+          echo "Roswell not properly cached"
+          exit 1
+        fi
+        echo "PATH after setup: $(echo $PATH | tr ':' '\n' | grep roswell || true)"
+
     - name: Install Roswell (system-wide)
       if: inputs.disable-cache == 'true' || steps.cache.outputs.cache-hit != 'true'
       shell: bash
