@@ -11,6 +11,10 @@ inputs:
     description: 'SBCL version. Default: 2.5.10'
     required: false
     default: '2.5.10'
+  disable-cache:
+    description: 'Disable caching'
+    required: false
+    default: false
 
 runs:
   using: 'composite'
@@ -40,7 +44,7 @@ runs:
         fi
 
     - name: Setup SBCL (cache miss or ensure active)
-      if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.disable-cache == 'true'
       shell: bash
       run: |
         sbcl_version="${{ inputs.sbcl-version }}"
@@ -49,7 +53,7 @@ runs:
         ros use sbcl-bin/$sbcl_version
 
     - name: Activate cached SBCL
-      if: steps.cache.outputs.cache-hit == 'true'
+      if: steps.cache.outputs.cache-hit == 'true' && inputs.disable-cache == 'false'
       shell: bash
       run: |
         sbcl_version="${{ inputs.sbcl-version }}"
