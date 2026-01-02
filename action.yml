@@ -33,7 +33,7 @@ runs:
       if: inputs.disable-cache == 'false'
       shell: bash
       run: |
-        echo "Cache enabled'
+        echo "Cache enabled"
 
     - name: Cache enabled
       if: inputs.disable-cache == 'true'
