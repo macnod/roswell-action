@@ -63,7 +63,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run roswell-action with SBCL 2.5.10
+      - name: Run roswell-action with disable-cache
         uses: ./
         with:
           disable-cache: true
