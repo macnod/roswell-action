@@ -25,7 +25,7 @@ runs:
         echo "disable-cache: '${{inputs.disable-cache}}'"
 
     - name: Cache full Roswell
-      if: inputs.disable-cache == 'false'
+      if: inputs.disable-cache == false
       uses: actions/cache@v4
       id: cache
       with:
@@ -35,7 +35,7 @@ runs:
           roswell-${{ runner.os }}-
 
     - name: Install Roswell (system-wide)
-      if: inputs.disable-cache == 'false' && steps.cache.outputs.cache-hit == 'false'
+      if: inputs.disable-cache == false && steps.cache.outputs.cache-hit == false
       shell: bash
       run: |
         url_prefix="https://github.com/roswell/roswell/releases/download"
