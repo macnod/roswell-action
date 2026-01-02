@@ -35,19 +35,22 @@ runs:
           roswell-${{ runner.os }}-
 
     - name: Install Roswell (system-wide)
+      if: inputs.disable-cache == 'false' && steps.cache.outputs.cache-hit == 'false'
       shell: bash
       run: |
         url_prefix="https://github.com/roswell/roswell/releases/download"
         roswell_version="${{ inputs.roswell-version }}"
         url="${url_prefix}/v${roswell_version}/roswell_${roswell_version}-1_amd64.deb"
-        if ! command -v ros >/dev/null 2>&1; then
-          echo "Installing Roswell..."
-          curl -fsSL "${url}" -o roswell.deb || { echo "Failed to download Roswell $roswell_version"; exit 1; }
-          sudo dpkg -i roswell.deb
-          rm roswell.deb
-        else
-          echo "Roswell already installed"
-        fi
+        echo "Installing Roswell..."
+        curl -fsSL "${url}" -o roswell.deb || { echo "Failed to download Roswell $roswell_version"; exit 1; }
+        sudo dpkg -i roswell.deb
+        rm roswell.deb
+
+    - name: Roswell already installed
+      if: inputs.disable-cache == 'true' && steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        echo "✅ Cache hit. Roswell installed from cache"
 
     - name: Setup SBCL (cache miss or ensure active)
       if: steps.cache.outputs.cache-hit != 'true' || inputs.disable-cache == 'true'
