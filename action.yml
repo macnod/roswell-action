@@ -51,7 +51,7 @@ runs:
           roswell-${{ runner.os }}-
 
     - name: Install Roswell (system-wide)
-      if: inputs.disable-cache == 'false' || steps.cache.outputs.cache-hit != 'true'
+      if: inputs.disable-cache == 'true' || steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         url_prefix="https://github.com/roswell/roswell/releases/download"
